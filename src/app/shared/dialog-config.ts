@@ -7,6 +7,11 @@ export const DIALOG_PADRAO: MatDialogConfig = {
   panelClass: 'dialog-padrao'
 };
 
+export const DIALOG_LISTA: MatDialogConfig = {
+  ...DIALOG_PADRAO,
+  height: '560px'
+};
+
 export const DIALOG_CONFIRMACAO: MatDialogConfig = {
   width: '420px',
   maxWidth: '95vw'

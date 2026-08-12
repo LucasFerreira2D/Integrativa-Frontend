@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+h2[mat-dialog-title] {
+  padding-right: 56px;
+}
+
+.dialog-subtitle {
+  display: block;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.dialog-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.parte-form {
+  display: grid;
+  grid-template-columns: 1fr 200px auto;
+  align-items: start;
+  gap: 12px;
+  padding-top: 8px;
+  padding-bottom: 16px;
+
+  button {
+    margin-top: 8px;
+  }
+}
+
+.separador {
+  color: var(--mat-sys-outline);
+  margin: 0 4px;
+}
+
+@media (max-width: 599px) {
+  .parte-form {
+    grid-template-columns: 1fr;
+
+    button { margin-top: 0; }
+  }
+}

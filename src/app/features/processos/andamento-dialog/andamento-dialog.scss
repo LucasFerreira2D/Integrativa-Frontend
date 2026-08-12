@@ -1,0 +1,63 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+h2[mat-dialog-title] {
+  padding-right: 56px;
+}
+
+.dialog-subtitle {
+  display: block;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.dialog-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.andamento-form {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.andamento-form .full-width,
+.andamento-form .actions {
+  grid-column: 1 / -1;
+}
+
+.andamento-form .actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 16px;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.timeline-date {
+  white-space: nowrap;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 599px) {
+  .andamento-form { grid-template-columns: 1fr; }
+  .timeline-item { grid-template-columns: 1fr auto; }
+}

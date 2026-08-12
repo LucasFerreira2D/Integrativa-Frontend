@@ -58,12 +58,28 @@
 
         <ng-container matColumnDef="partes">
           <th mat-header-cell *matHeaderCellDef>Partes</th>
-          <td mat-cell *matCellDef="let p">{{ p.totalPartes }}</td>
+          <td mat-cell *matCellDef="let p">
+            <div class="contador-cell">
+              <span>{{ p.totalPartes }}</span>
+              <button mat-icon-button color="primary" (click)="gerenciarPartes(p)"
+                      matTooltip="Adicionar parte" aria-label="Adicionar parte">
+                <mat-icon>person_add</mat-icon>
+              </button>
+            </div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="andamentos">
           <th mat-header-cell *matHeaderCellDef>Andamentos</th>
-          <td mat-cell *matCellDef="let p">{{ p.totalAndamentos }}</td>
+          <td mat-cell *matCellDef="let p">
+            <div class="contador-cell">
+              <span>{{ p.totalAndamentos }}</span>
+              <button mat-icon-button color="primary" (click)="verAndamentos(p)"
+                      matTooltip="Ver andamentos" aria-label="Ver andamentos">
+                <mat-icon>search</mat-icon>
+              </button>
+            </div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="alteracao">

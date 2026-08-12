@@ -1,1 +1,66 @@
-<p>parte-dialog works!</p>
+<h2 mat-dialog-title>
+  Partes
+  <span class="dialog-subtitle">Processo {{ data.numero }}</span>
+  <button mat-icon-button class="dialog-close" (click)="fechar()" aria-label="Fechar">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+@if (carregando()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="adicionar()" class="parte-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="nome" autocomplete="off" placeholder="Ex.: João da Silva" />
+      @if (form.controls.nome.hasError('required') && form.controls.nome.touched) {
+        <mat-error>Nome é obrigatório.</mat-error>
+      }
+      @if (form.controls.nome.hasError('maxlength')) {
+        <mat-error>Máximo de 200 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="tipo">
+        @for (tipo of tipoOpcoes; track tipo) {
+          <mat-option [value]="tipo">{{ rotuloTipo[tipo] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" type="submit" [disabled]="salvando()">
+      <mat-icon>person_add</mat-icon>
+      Adicionar
+    </button>
+  </form>
+
+  <mat-divider />
+
+  @if (partes().length) {
+    <mat-list>
+      @for (parte of partes(); track parte.id) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>person</mat-icon>
+          <span matListItemTitle>{{ parte.nome }}</span>
+          <span matListItemLine>
+            {{ rotuloTipo[parte.tipo] }}
+            <span class="separador">·</span>
+            <app-auditoria-info [auditoria]="parte" />
+          </span>
+          <button mat-icon-button matListItemMeta class="acao-perigo"
+                  (click)="remover(parte)" aria-label="Remover parte">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-list-item>
+      }
+    </mat-list>
+  } @else if (!carregando()) {
+    <div class="empty-state">
+      <p>Nenhuma parte vinculada a este processo.</p>
+    </div>
+  }
+</mat-dialog-content>

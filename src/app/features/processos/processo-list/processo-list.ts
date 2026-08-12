@@ -15,7 +15,9 @@ import { ProcessoService } from '../../../core/processo.service';
 import { Processo, STATUS_CLASSE, STATUS_OPCOES, StatusProcesso } from '../../../models/processo.model';
 import { AuditoriaInfo } from '../../../shared/auditoria-info/auditoria-info';
 import { ConfirmDialog, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog';
-import { DIALOG_CONFIRMACAO, DIALOG_PADRAO } from '../../../shared/dialog-config';
+import { DIALOG_CONFIRMACAO, DIALOG_LISTA, DIALOG_PADRAO } from '../../../shared/dialog-config';
+import { AndamentoDialog, AndamentoDialogData } from '../andamento-dialog/andamento-dialog';
+import { ParteDialog, ParteDialogData } from '../parte-dialog/parte-dialog';
 import {
   ProcessoFormDialog, ProcessoFormDialogData
 } from '../processo-form-dialog/processo-form-dialog';
@@ -94,6 +96,26 @@ export class ProcessoList {
 
   novoProcesso(): void {
     this.abrirFormulario({});
+  }
+
+  gerenciarPartes(processo: Processo): void {
+    const data: ParteDialogData = { processoId: processo.id, numero: processo.numero };
+
+    this.dialog.open(ParteDialog, { ...DIALOG_LISTA, data, disableClose: true })
+      .afterClosed()
+      .subscribe(alterou => {
+        if (alterou) this.carregar();
+      });
+  }
+
+  verAndamentos(processo: Processo): void {
+    const data: AndamentoDialogData = { processoId: processo.id, numero: processo.numero };
+
+    this.dialog.open(AndamentoDialog, { ...DIALOG_LISTA, data, disableClose: true })
+      .afterClosed()
+      .subscribe(alterou => {
+        if (alterou) this.carregar();
+      });
   }
 
   editar(processo: Processo): void {

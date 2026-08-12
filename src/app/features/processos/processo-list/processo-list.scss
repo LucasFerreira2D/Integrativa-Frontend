@@ -32,6 +32,12 @@ th, td {
   padding-right: 0;
 }
 
+.contador-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 @media (max-width: 1099px) {
   table {
     table-layout: auto;

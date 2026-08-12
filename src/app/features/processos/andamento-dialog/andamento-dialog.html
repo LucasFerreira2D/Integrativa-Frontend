@@ -1,1 +1,65 @@
-<p>andamento-dialog works!</p>
+<h2 mat-dialog-title>
+  Andamentos
+  <span class="dialog-subtitle">Processo {{ data.numero }}</span>
+  <button mat-icon-button class="dialog-close" (click)="fechar()" aria-label="Fechar">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+@if (carregando()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="adicionar()" class="andamento-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Data</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="data" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descrição</mat-label>
+      <textarea matInput formControlName="descricao" rows="2"
+                placeholder="Ex.: Petição inicial protocolada"></textarea>
+      @if (form.controls.descricao.hasError('required') && form.controls.descricao.touched) {
+        <mat-error>Descrição é obrigatória.</mat-error>
+      }
+      @if (form.controls.descricao.hasError('maxlength')) {
+        <mat-error>Máximo de 1000 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="salvando()">
+        <mat-icon>add</mat-icon>
+        Adicionar
+      </button>
+    </div>
+  </form>
+
+  <mat-divider />
+
+  @if (andamentos().length) {
+    <div class="timeline">
+      @for (andamento of andamentos(); track andamento.id) {
+        <div class="timeline-item">
+          <div class="timeline-date">{{ andamento.data | date: 'dd/MM/yyyy' }}</div>
+          <div>
+            <div>{{ andamento.descricao }}</div>
+            <app-auditoria-info [auditoria]="andamento" />
+          </div>
+          <button mat-icon-button class="acao-perigo" (click)="remover(andamento)"
+                  aria-label="Remover andamento">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+  } @else if (!carregando()) {
+    <div class="empty-state">
+      <p>Nenhum andamento registrado.</p>
+    </div>
+  }
+</mat-dialog-content>
