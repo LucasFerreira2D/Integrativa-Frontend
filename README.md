@@ -50,9 +50,9 @@ Tudo fica sob `src/app`:
 - **core**: o `ProcessoService`, que concentra as chamadas HTTP, o interceptor de erro e os rótulos em português do paginador.
 - **models**: as interfaces que espelham os DTOs da API, mais as constantes de status e tipo de parte usadas na UI.
 - **shared**: componentes reaproveitados entre telas (`AuditoriaInfo`, `ConfirmDialog`) e as configurações padrão de diálogo.
-- **features/processos**: a listagem e os quatro diálogos — formulário de processo, partes e andamentos.
+- **features/processos**: a listagem, a tela de detalhes e os diálogos de formulário, partes e andamentos.
 
-A rota `/processos` carrega a listagem com `loadComponent`, então a tela e todo o Material que ela usa ficam num chunk separado do bundle inicial.
+As duas telas são carregadas com `loadComponent`, então cada uma vira um chunk separado do bundle inicial.
 
 O `ProcessoService` é a única coisa que sabe o formato da API. Os componentes recebem e devolvem os tipos de `models` e nunca montam URL.
 
@@ -72,22 +72,32 @@ Roboto e Material Icons vêm do Google Fonts, declaradas no `index.html`. Sem el
 
 ## Telas
 
-A listagem tem filtro por número (busca parcial) e por status, paginação servida pelo backend e uma coluna de última alteração com usuário e data.
+São duas rotas.
 
-Cada linha abre quatro diálogos:
+**`/processos`** é a listagem: filtro por número (busca parcial) e por status, paginação servida pelo backend, contadores de partes e andamentos e uma coluna de última alteração com usuário e data. Cada linha leva para os detalhes e traz atalhos para editar, excluir e abrir os diálogos de partes e andamentos.
+
+**`/processos/:id`** é a tela de detalhes: o cabeçalho com número e status, o resumo com assunto e datas, a lista de partes e os andamentos em ordem cronológica, do mais recente para o mais antigo.
+
+Quatro diálogos são usados a partir das duas:
 
 - **formulário de processo**, o mesmo para criar e editar — recebe um `id` opcional e decide pelo que veio;
 - **partes**, para vincular e remover partes do processo;
-- **andamentos**, com datepicker e a timeline do mais recente para o mais antigo;
+- **andamentos**, com datepicker para registrar a data do movimento;
 - **confirmação**, exigida antes de qualquer exclusão.
 
-Os diálogos de partes e andamentos devolvem um booleano dizendo se algo mudou, e a listagem só recarrega quando ele é verdadeiro — assim os contadores das colunas ficam certos sem uma requisição a cada fechamento.
+Os diálogos de partes e andamentos devolvem um booleano dizendo se algo mudou, e a tela que os abriu só recarrega quando ele é verdadeiro — assim os contadores ficam certos sem uma requisição a cada fechamento.
 
 Erro de API não aparece no console: o `errorInterceptor` lê o `ProblemDetails` da resposta e mostra a mensagem num snackbar, inclusive os erros de validação campo a campo.
 
+## Responsividade
+
+A tabela da listagem não rola na horizontal. Conforme a tela estreita, as colunas menos essenciais somem: última alteração abaixo de 1100px; criado em, partes e andamentos abaixo de 840px; status abaixo de 600px, quando número e assunto passam a quebrar linha. Número, assunto e as ações ficam sempre visíveis.
+
+Como os atalhos de partes e andamentos saem da tabela nas telas estreitas, é pela tela de detalhes que se chega a eles no celular. Diálogos e formulários quebram em uma coluna abaixo de 600px.
+
 ## O que ficou de fora
 
-- Testes. Os `.spec.ts` são os que o CLI gerou e não foram ajustados; `npm test` falha nos diálogos, que hoje exigem `MatDialogRef` no `TestBed`.
+- Testes automatizados.
 - Autenticação. A API preenche `UsuarioAlteracao` com `"Sistema"` fixo, e a interface só exibe esse campo.
-- Layout responsivo além do básico. Os diálogos e o formulário quebram em uma coluna abaixo de 600px, mas a tabela apenas ganha rolagem horizontal.
+- Um shell da aplicação. Não há cabeçalho nem navegação: a rota raiz vai direto para a listagem.
 - Dockerfile.
