@@ -1,59 +1,93 @@
-# IntegrativaFrontend
+# Sistema de Gestão de Processos — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.0.
+Interface web para cadastrar e acompanhar processos, com as partes envolvidas (interessadas e contrárias) e o histórico de andamentos de cada um.
 
-## Development server
+Este repositório tem só o frontend. A API está em [Integrativa-Backend](https://github.com/LucasFerreira2D/Integrativa-Backend) e precisa estar rodando.
 
-To start a local development server, run:
+## Stack
 
-```bash
-ng serve
-```
+- Angular 22 (standalone, zoneless)
+- Angular Material 22
+- TypeScript 6
+- RxJS 7
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Como rodar
 
-## Code scaffolding
+Você vai precisar do Node 20 ou superior e da API rodando em `http://localhost:5122`.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Clone o projeto e instale as dependências:
 
 ```bash
-ng generate --help
+git clone https://github.com/LucasFerreira2D/Integrativa-Frontend.git
+cd Integrativa-Frontend
+npm install
 ```
 
-## Building
-
-To build the project run:
+Suba o dev server:
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+A aplicação abre em `http://localhost:4200` e redireciona para `/processos`.
 
-## Running unit tests
+Não há configuração de ambiente para preencher: o `ProcessoService` chama caminhos relativos (`/api/processos`) e o `proxy.conf.json` encaminha tudo que começa com `/api` para `http://localhost:5122`. Se a API subir em outra porta, é esse arquivo que muda.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Como o proxy repassa as requisições pelo próprio dev server, o browser vê tudo na mesma origem e não há preflight — por isso a API não precisa de CORS em desenvolvimento. Em produção o mesmo host deve servir o `dist/` e a API sob `/api`; servindo em origens diferentes, aí sim o backend precisa liberar CORS.
+
+Para gerar o bundle de produção:
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+A saída vai para `dist/integrativa-frontend`.
 
-For end-to-end (e2e) testing, run:
+## Organização do código
 
-```bash
-ng e2e
-```
+Tudo fica sob `src/app`:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- **core**: o `ProcessoService`, que concentra as chamadas HTTP, o interceptor de erro e os rótulos em português do paginador.
+- **models**: as interfaces que espelham os DTOs da API, mais as constantes de status e tipo de parte usadas na UI.
+- **shared**: componentes reaproveitados entre telas (`AuditoriaInfo`, `ConfirmDialog`) e as configurações padrão de diálogo.
+- **features/processos**: a listagem e os quatro diálogos — formulário de processo, partes e andamentos.
 
-## Additional Resources
+A rota `/processos` carrega a listagem com `loadComponent`, então a tela e todo o Material que ela usa ficam num chunk separado do bundle inicial.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+O `ProcessoService` é a única coisa que sabe o formato da API. Os componentes recebem e devolvem os tipos de `models` e nunca montam URL.
+
+## Decisões
+
+Não há nenhum `NgModule`. Todo componente é standalone e declara os próprios `imports`; o que era `SharedModule` virou import direto e o que era `FeatureModule` virou arquivo de rotas.
+
+A aplicação roda **zoneless** (`provideZonelessChangeDetection()`), que é o padrão do Angular 22 — o `zone.js` não está instalado. Estado que a tela precisa enxergar mora em `signal`, e todo componente usa `ChangeDetectionStrategy.OnPush`. Na prática isso significa que mutar um campo comum dentro de um callback assíncrono não redesenha nada: ou o valor é um signal, ou a mudança vem de um evento do template.
+
+O `@angular/animations` também não está instalado. Está depreciado desde a v20.2 e o Material 22 não depende mais dele — as animações são CSS nativo.
+
+Os arquivos seguem a convenção do CLI a partir da v20: sem o sufixo `.component`, e a classe com o mesmo nome do arquivo (`processo-list.ts` → `ProcessoList`).
+
+Não existe `src/environments`. Com um único ambiente e caminho relativo, seria uma indireção para uma constante só.
+
+Roboto e Material Icons vêm do Google Fonts, declaradas no `index.html`. Sem elas o `mat-icon` renderiza o nome da ligature como texto cru e o `mat.theme()` cai na fonte serifada do browser.
+
+## Telas
+
+A listagem tem filtro por número (busca parcial) e por status, paginação servida pelo backend e uma coluna de última alteração com usuário e data.
+
+Cada linha abre quatro diálogos:
+
+- **formulário de processo**, o mesmo para criar e editar — recebe um `id` opcional e decide pelo que veio;
+- **partes**, para vincular e remover partes do processo;
+- **andamentos**, com datepicker e a timeline do mais recente para o mais antigo;
+- **confirmação**, exigida antes de qualquer exclusão.
+
+Os diálogos de partes e andamentos devolvem um booleano dizendo se algo mudou, e a listagem só recarrega quando ele é verdadeiro — assim os contadores das colunas ficam certos sem uma requisição a cada fechamento.
+
+Erro de API não aparece no console: o `errorInterceptor` lê o `ProblemDetails` da resposta e mostra a mensagem num snackbar, inclusive os erros de validação campo a campo.
+
+## O que ficou de fora
+
+- Testes. Os `.spec.ts` são os que o CLI gerou e não foram ajustados; `npm test` falha nos diálogos, que hoje exigem `MatDialogRef` no `TestBed`.
+- Autenticação. A API preenche `UsuarioAlteracao` com `"Sistema"` fixo, e a interface só exibe esse campo.
+- Layout responsivo além do básico. Os diálogos e o formulário quebram em uma coluna abaixo de 600px, mas a tabela apenas ganha rolagem horizontal.
+- Dockerfile.
