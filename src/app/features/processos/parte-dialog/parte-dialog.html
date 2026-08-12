@@ -41,23 +41,25 @@
   <mat-divider />
 
   @if (partes().length) {
-    <mat-list>
+    <div class="lista">
       @for (parte of partes(); track parte.id) {
-        <mat-list-item>
-          <mat-icon matListItemIcon>person</mat-icon>
-          <span matListItemTitle>{{ parte.nome }}</span>
-          <span matListItemLine>
-            {{ rotuloTipo[parte.tipo] }}
-            <span class="separador">·</span>
-            <app-auditoria-info [auditoria]="parte" />
-          </span>
-          <button mat-icon-button matListItemMeta class="acao-perigo"
+        <div class="lista-item">
+          <mat-icon>person</mat-icon>
+          <div>
+            <div class="lista-titulo">{{ parte.nome }}</div>
+            <div class="lista-sub">
+              {{ rotuloTipo[parte.tipo] }}
+              <span class="separador">·</span>
+              <app-auditoria-info [auditoria]="parte" />
+            </div>
+          </div>
+          <button mat-icon-button class="acao-perigo"
                   (click)="remover(parte)" aria-label="Remover parte">
             <mat-icon>delete</mat-icon>
           </button>
-        </mat-list-item>
+        </div>
       }
-    </mat-list>
+    </div>
   } @else if (!carregando()) {
     <div class="empty-state">
       <p>Nenhuma parte vinculada a este processo.</p>

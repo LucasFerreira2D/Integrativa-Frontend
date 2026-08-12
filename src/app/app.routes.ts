@@ -8,5 +8,11 @@ export const routes: Routes = [
       import('./features/processos/processo-list/processo-list')
         .then(m => m.ProcessoList)
   },
+  {
+    path: 'processos/:id',
+    loadComponent: () =>
+      import('./features/processos/processo-detalhes/processo-detalhes')
+        .then(m => m.ProcessoDetalhes)
+  },
   { path: '**', redirectTo: 'processos' }
 ];

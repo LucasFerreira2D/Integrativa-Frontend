@@ -42,13 +42,17 @@
   <mat-divider />
 
   @if (andamentos().length) {
-    <div class="timeline">
+    <div class="lista">
       @for (andamento of andamentos(); track andamento.id) {
-        <div class="timeline-item">
-          <div class="timeline-date">{{ andamento.data | date: 'dd/MM/yyyy' }}</div>
+        <div class="lista-item">
+          <mat-icon>event_note</mat-icon>
           <div>
-            <div>{{ andamento.descricao }}</div>
-            <app-auditoria-info [auditoria]="andamento" />
+            <div class="lista-titulo">{{ andamento.descricao }}</div>
+            <div class="lista-sub">
+              {{ andamento.data | date: 'dd/MM/yyyy' }}
+              <span class="separador">·</span>
+              <app-auditoria-info [auditoria]="andamento" />
+            </div>
           </div>
           <button mat-icon-button class="acao-perigo" (click)="remover(andamento)"
                   aria-label="Remover andamento">

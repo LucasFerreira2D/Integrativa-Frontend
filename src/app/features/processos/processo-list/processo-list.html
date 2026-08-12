@@ -36,7 +36,9 @@
       <table mat-table [dataSource]="processos()">
         <ng-container matColumnDef="numero">
           <th mat-header-cell *matHeaderCellDef>Número</th>
-          <td mat-cell *matCellDef="let p" class="cell-numero">{{ p.numero }}</td>
+          <td mat-cell *matCellDef="let p" class="cell-numero">
+            <a [routerLink]="['/processos', p.id]">{{ p.numero }}</a>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="assunto">
@@ -92,6 +94,10 @@
         <ng-container matColumnDef="acoes">
           <th mat-header-cell *matHeaderCellDef aria-label="Ações"></th>
           <td mat-cell *matCellDef="let p" class="cell-acoes">
+            <a mat-icon-button [routerLink]="['/processos', p.id]"
+               matTooltip="Ver detalhes" aria-label="Ver detalhes">
+              <mat-icon>visibility</mat-icon>
+            </a>
             <button mat-icon-button (click)="editar(p)"
                     matTooltip="Editar processo" aria-label="Editar">
               <mat-icon>edit</mat-icon>

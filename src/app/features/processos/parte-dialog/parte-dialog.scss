@@ -33,9 +33,36 @@ h2[mat-dialog-title] {
   }
 }
 
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+.lista-item {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 12px;
+  align-items: start;
+
+  > mat-icon {
+    margin-top: 2px;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.lista-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
 .separador {
   color: var(--mat-sys-outline);
-  margin: 0 4px;
 }
 
 @media (max-width: 599px) {

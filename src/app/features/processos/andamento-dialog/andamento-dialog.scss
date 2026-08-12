@@ -38,26 +38,38 @@ h2[mat-dialog-title] {
   padding-bottom: 16px;
 }
 
-.timeline {
+.lista {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 12px;
+  gap: 16px;
+  padding-top: 16px;
 }
 
-.timeline-item {
+.lista-item {
   display: grid;
-  grid-template-columns: 110px 1fr auto;
+  grid-template-columns: 24px 1fr auto;
   gap: 12px;
   align-items: start;
+
+  > mat-icon {
+    margin-top: 2px;
+    color: var(--mat-sys-on-surface-variant);
+  }
 }
 
-.timeline-date {
-  white-space: nowrap;
+.lista-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font: var(--mat-sys-body-small);
   color: var(--mat-sys-on-surface-variant);
+}
+
+.separador {
+  color: var(--mat-sys-outline);
 }
 
 @media (max-width: 599px) {
   .andamento-form { grid-template-columns: 1fr; }
-  .timeline-item { grid-template-columns: 1fr auto; }
 }

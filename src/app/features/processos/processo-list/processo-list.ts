@@ -11,6 +11,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { ProcessoService } from '../../../core/processo.service';
 import { Processo, STATUS_CLASSE, STATUS_OPCOES, StatusProcesso } from '../../../models/processo.model';
 import { AuditoriaInfo } from '../../../shared/auditoria-info/auditoria-info';
@@ -25,9 +26,10 @@ import {
 @Component({
   selector: 'app-processo-list',
   imports: [
-    DatePipe, FormsModule, AuditoriaInfo, MatButtonModule, MatDialogModule,
-    MatFormFieldModule, MatIconModule, MatInputModule, MatPaginatorModule,
-    MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule
+    DatePipe, FormsModule, RouterLink, AuditoriaInfo, MatButtonModule,
+    MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule,
+    MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatTableModule,
+    MatTooltipModule
   ],
   templateUrl: './processo-list.html',
   styleUrl: './processo-list.scss',
