@@ -2,22 +2,30 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProcessoService } from '../../../core/processo.service';
 import { Processo, STATUS_CLASSE, STATUS_OPCOES, StatusProcesso } from '../../../models/processo.model';
 import { AuditoriaInfo } from '../../../shared/auditoria-info/auditoria-info';
+import { ConfirmDialog, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog';
+import { DIALOG_CONFIRMACAO, DIALOG_PADRAO } from '../../../shared/dialog-config';
+import {
+  ProcessoFormDialog, ProcessoFormDialogData
+} from '../processo-form-dialog/processo-form-dialog';
 
 @Component({
   selector: 'app-processo-list',
   imports: [
-    DatePipe, FormsModule, AuditoriaInfo, MatButtonModule, MatFormFieldModule,
-    MatInputModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule,
-    MatTableModule
+    DatePipe, FormsModule, AuditoriaInfo, MatButtonModule, MatDialogModule,
+    MatFormFieldModule, MatIconModule, MatInputModule, MatPaginatorModule,
+    MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule
   ],
   templateUrl: './processo-list.html',
   styleUrl: './processo-list.scss',
@@ -25,10 +33,11 @@ import { AuditoriaInfo } from '../../../shared/auditoria-info/auditoria-info';
 })
 export class ProcessoList {
   private readonly service = inject(ProcessoService);
+  private readonly dialog = inject(MatDialog);
 
   readonly statusOpcoes = STATUS_OPCOES;
   readonly colunas = [
-    'numero', 'assunto', 'status', 'dataCriacao', 'partes', 'andamentos', 'alteracao'
+    'numero', 'assunto', 'status', 'dataCriacao', 'partes', 'andamentos', 'alteracao', 'acoes'
   ];
 
   classeStatus(status: StatusProcesso): string {
@@ -81,5 +90,43 @@ export class ProcessoList {
     this.page = evento.pageIndex;
     this.pageSize = evento.pageSize;
     this.carregar();
+  }
+
+  novoProcesso(): void {
+    this.abrirFormulario({});
+  }
+
+  editar(processo: Processo): void {
+    this.abrirFormulario({ id: processo.id });
+  }
+
+  excluir(processo: Processo): void {
+    const data: ConfirmDialogData = {
+      titulo: 'Excluir processo',
+      mensagem: `Excluir o processo ${processo.numero}? Partes e andamentos serão removidos junto.`,
+      confirmar: 'Excluir',
+      perigo: true
+    };
+
+    this.dialog.open(ConfirmDialog, { ...DIALOG_CONFIRMACAO, data })
+      .afterClosed()
+      .subscribe(confirmado => {
+        if (!confirmado) return;
+
+        this.service.excluir(processo.id).subscribe(() => {
+          if (this.processos().length === 1 && this.page > 0) {
+            this.page--;
+          }
+          this.carregar();
+        });
+      });
+  }
+
+  private abrirFormulario(data: ProcessoFormDialogData): void {
+    this.dialog.open(ProcessoFormDialog, { ...DIALOG_PADRAO, data })
+      .afterClosed()
+      .subscribe(salvou => {
+        if (salvou) this.carregar();
+      });
   }
 }

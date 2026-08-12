@@ -1,0 +1,26 @@
+.dialog-grid {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.dialog-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+.auditoria-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 599px) {
+  .dialog-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,1 +1,56 @@
-<p>processo-form-dialog works!</p>
+<h2 mat-dialog-title>{{ edicao ? 'Editar processo' : 'Novo processo' }}</h2>
+
+@if (carregando()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<form [formGroup]="form" (ngSubmit)="salvar()">
+  <mat-dialog-content>
+    <div class="dialog-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Número do processo</mat-label>
+        <input matInput formControlName="numero" autocomplete="off" />
+        @if (form.controls.numero.hasError('required') && form.controls.numero.touched) {
+          <mat-error>Número é obrigatório.</mat-error>
+        }
+        @if (form.controls.numero.hasError('maxlength')) {
+          <mat-error>Máximo de 50 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          @for (status of statusOpcoes; track status) {
+            <mat-option [value]="status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Assunto / Descrição</mat-label>
+        <textarea matInput formControlName="assunto" rows="4"></textarea>
+        @if (form.controls.assunto.hasError('required') && form.controls.assunto.touched) {
+          <mat-error>Assunto é obrigatório.</mat-error>
+        }
+        @if (form.controls.assunto.hasError('maxlength')) {
+          <mat-error>Máximo de 500 caracteres.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    @if (auditoria(); as a) {
+      <div class="auditoria-linha">
+        Última alteração:
+        <app-auditoria-info [auditoria]="a" />
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="salvando() || carregando()">
+      {{ edicao ? 'Salvar alterações' : 'Criar processo' }}
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -5,10 +5,11 @@ table {
 
 .mat-column-numero { width: 170px; }
 .mat-column-status { width: 112px; }
-.mat-column-dataCriacao { width: 100px; }
+.mat-column-dataCriacao { width: 124px; }
 .mat-column-partes { width: 96px; }
 .mat-column-andamentos { width: 120px; }
 .mat-column-alteracao { width: 150px; }
+.mat-column-acoes { width: 96px; }
 
 th, td {
   padding-right: 8px;
@@ -23,6 +24,12 @@ th, td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.cell-acoes {
+  white-space: nowrap;
+  text-align: right;
+  padding-right: 0;
 }
 
 @media (max-width: 1099px) {

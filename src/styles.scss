@@ -66,6 +66,26 @@ body {
   p { margin: 0; }
 }
 
+.dialog-padrao mat-dialog-content {
+  min-height: 320px;
+}
+
+.acao-perigo {
+  --mdc-icon-button-icon-color: var(--mat-sys-error);
+  --mat-icon-button-icon-color: var(--mat-sys-error);
+  --mdc-filled-button-container-color: var(--mat-sys-error);
+  --mat-filled-button-container-color: var(--mat-sys-error);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-error);
+  --mat-filled-button-label-text-color: var(--mat-sys-on-error);
+
+  mat-icon { color: var(--mat-sys-error); }
+}
+
+.acao-perigo.mat-mdc-unelevated-button mat-icon,
+.acao-perigo.mat-mdc-raised-button mat-icon {
+  color: var(--mat-sys-on-error);
+}
+
 .status-chip {
   display: inline-flex;
   align-items: center;
