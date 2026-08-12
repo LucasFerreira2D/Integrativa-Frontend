@@ -1,1 +1,88 @@
-<p>processo-list works!</p>
+<div class="page">
+  <div class="page-header">
+    <h2>Processos</h2>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Número</mat-label>
+      <input matInput [(ngModel)]="filtroNumero" (keyup.enter)="aplicarFiltros()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="filtroStatus">
+        <mat-option [value]="null">Todos</mat-option>
+        @for (status of statusOpcoes; track status) {
+          <mat-option [value]="status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" (click)="aplicarFiltros()">Filtrar</button>
+    <button mat-button (click)="limparFiltros()">Limpar</button>
+  </div>
+
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (processos().length) {
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="processos()">
+        <ng-container matColumnDef="numero">
+          <th mat-header-cell *matHeaderCellDef>Número</th>
+          <td mat-cell *matCellDef="let p" class="cell-numero">{{ p.numero }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="assunto">
+          <th mat-header-cell *matHeaderCellDef>Assunto</th>
+          <td mat-cell *matCellDef="let p" class="cell-assunto" [title]="p.assunto">{{ p.assunto }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let p">
+            <span class="status-chip" [class]="classeStatus(p.status)">{{ p.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dataCriacao">
+          <th mat-header-cell *matHeaderCellDef>Criado em</th>
+          <td mat-cell *matCellDef="let p">{{ p.dataCriacao | date: 'dd/MM/yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="partes">
+          <th mat-header-cell *matHeaderCellDef>Partes</th>
+          <td mat-cell *matCellDef="let p">{{ p.totalPartes }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="andamentos">
+          <th mat-header-cell *matHeaderCellDef>Andamentos</th>
+          <td mat-cell *matCellDef="let p">{{ p.totalAndamentos }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="alteracao">
+          <th mat-header-cell *matHeaderCellDef>Última alteração</th>
+          <td mat-cell *matCellDef="let p">
+            <app-auditoria-info [auditoria]="p" [bloco]="true" />
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="totalItems()"
+      [pageSize]="pageSize"
+      [pageIndex]="page"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="mudarPagina($event)" />
+  } @else if (!carregando()) {
+    <div class="empty-state">
+      <p>Nenhum processo encontrado.</p>
+    </div>
+  }
+</div>
